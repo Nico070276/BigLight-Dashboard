@@ -1,5 +1,5 @@
 // ============================================================
-// RENOV352 — Réinitialiser le mot de passe d'un admin
+// BIG LIGHT — Réinitialiser le mot de passe d'un admin
 // ============================================================
 // Usage (depuis le dossier dashboard/) :
 //   node scripts/reset-admin-password.mjs <email> "<nouveau_mot_de_passe>"

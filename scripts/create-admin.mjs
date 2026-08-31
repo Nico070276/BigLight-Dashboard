@@ -1,5 +1,5 @@
 // ============================================================
-// RENOV352 — Créer un compte administrateur (dashboard)
+// BIG LIGHT — Créer un compte administrateur (dashboard)
 // ============================================================
 // Usage (depuis le dossier dashboard/) :
 //   node scripts/create-admin.mjs <email> "<mot_de_passe>"
