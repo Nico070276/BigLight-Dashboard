@@ -7,9 +7,9 @@ import TopBar from "@/components/TopBar";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 const STATUT_LABEL = {
-  actif: { bg: "bg-green-100", text: "text-green-800", label: "Actif" },
-  demarrage: { bg: "bg-orange-100", text: "text-orange-800", label: "En démarrage" },
-  termine: { bg: "bg-gray-100", text: "text-gray-600", label: "Terminé" },
+  actif: { bg: "bg-success/15", text: "text-success", label: "Actif" },
+  demarrage: { bg: "bg-warning/15", text: "text-warning", label: "En démarrage" },
+  termine: { bg: "bg-white/10", text: "text-muted", label: "Terminé" },
 };
 
 export default function ChantiersPage() {
@@ -40,7 +40,7 @@ export default function ChantiersPage() {
       <TopBar title="Chantiers">
         <button
           onClick={() => { setEditing(null); setShowModal(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] text-white rounded-lg text-sm font-semibold hover:bg-black"
+          className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg text-sm font-semibold hover:opacity-90"
         >
           <Plus size={16} />
           Nouveau chantier
@@ -80,10 +80,10 @@ export default function ChantiersPage() {
                         </span>
                       </td>
                       <td className="p-3 text-right">
-                        <button onClick={() => { setEditing(c); setShowModal(true); }} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-black/5 mr-1">
+                        <button onClick={() => { setEditing(c); setShowModal(true); }} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-white/5 mr-1">
                           <Pencil size={14} />
                         </button>
-                        <button onClick={() => handleDelete(c.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-red-50 text-danger">
+                        <button onClick={() => handleDelete(c.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger">
                           <Trash2 size={14} />
                         </button>
                       </td>
@@ -112,10 +112,10 @@ export default function ChantiersPage() {
                       {c.date_debut ? `Début ${new Date(c.date_debut).toLocaleDateString("fr-FR")}` : "—"}
                     </div>
                     <div className="flex gap-2">
-                      <button onClick={() => { setEditing(c); setShowModal(true); }} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white">
+                      <button onClick={() => { setEditing(c); setShowModal(true); }} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card">
                         <Pencil size={15} />
                       </button>
-                      <button onClick={() => handleDelete(c.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white text-danger">
+                      <button onClick={() => handleDelete(c.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card text-danger">
                         <Trash2 size={15} />
                       </button>
                     </div>
@@ -178,7 +178,7 @@ function ChantierModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-      <form onSubmit={handleSave} className="bg-white rounded-xl p-6 w-full max-w-md">
+      <form onSubmit={handleSave} className="bg-card rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold mb-4">{chantier ? "Modifier le chantier" : "Nouveau chantier"}</h2>
 
         <div className="space-y-3">
@@ -204,7 +204,7 @@ function ChantierModal({
             <select
               value={statut}
               onChange={(e) => setStatut(e.target.value as Chantier["statut"])}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-foreground bg-white"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-foreground bg-card"
             >
               <option value="actif">Actif</option>
               <option value="demarrage">En démarrage</option>
@@ -234,10 +234,10 @@ function ChantierModal({
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-white text-sm font-semibold">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-card text-sm font-semibold">
             Annuler
           </button>
-          <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-[#1a1a1a] text-white text-sm font-semibold disabled:opacity-50">
+          <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-accent text-background text-sm font-semibold disabled:opacity-50">
             {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
         </div>

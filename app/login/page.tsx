@@ -36,15 +36,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafaf9]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <Image src="/logo.png" alt="BIG LIGHT" width={120} height={80} className="h-20 w-auto mb-4" />
+          <Image src="/logo.png" alt="BIG LIGHT" width={213} height={80} className="h-20 w-auto mb-4" />
           <h1 className="text-2xl font-bold">Pointage</h1>
           <p className="text-sm text-muted mt-1">Connexion administrateur</p>
         </div>
 
-        <form onSubmit={handleLogin} className="bg-white border border-border rounded-2xl p-6 shadow-sm">
+        <form onSubmit={handleLogin} className="bg-card border border-border rounded-2xl p-6 shadow-sm">
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-muted mb-1.5">Email</label>
@@ -77,7 +77,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800">
+              <div className="p-3 bg-danger/10 border border-danger/30 rounded-lg text-xs text-danger">
                 {error}
               </div>
             )}
@@ -91,7 +91,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1a1a1a] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-black disabled:opacity-50"
+              className="w-full bg-accent text-background py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
             >
               {loading ? "Connexion..." : "Se connecter"}
             </button>

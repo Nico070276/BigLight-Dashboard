@@ -101,7 +101,7 @@ export default function DashboardPage() {
       <TopBar title="Tableau de bord">
         <button
           onClick={loadData}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-lg text-sm font-medium hover:bg-black/5"
+          className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium hover:bg-white/5"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           Actualiser
@@ -160,9 +160,9 @@ function StatCard({ label, value, trend }: { label: string; value: string; trend
 
 function StatusTag({ statut }: { statut: WorkerStatus["statut"] }) {
   const config = {
-    travail: { bg: "bg-green-100", text: "text-green-800", label: "● En travail" },
-    pause: { bg: "bg-orange-100", text: "text-orange-800", label: "● En pause" },
-    "hors-ligne": { bg: "bg-gray-100", text: "text-gray-600", label: "Non pointé" },
+    travail: { bg: "bg-success/15", text: "text-success", label: "● En travail" },
+    pause: { bg: "bg-warning/15", text: "text-warning", label: "● En pause" },
+    "hors-ligne": { bg: "bg-white/10", text: "text-muted", label: "Non pointé" },
   }[statut];
   return (
     <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${config.bg} ${config.text}`}>

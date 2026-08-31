@@ -71,7 +71,7 @@ export default function AbsencesPage() {
             setEditing(null);
             setShowModal(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] text-white rounded-lg text-sm font-semibold hover:bg-black"
+          className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg text-sm font-semibold hover:opacity-90"
         >
           <Plus size={16} />
           Ajouter une absence
@@ -118,14 +118,14 @@ export default function AbsencesPage() {
                           setEditing(a);
                           setShowModal(true);
                         }}
-                        className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-black/5 mr-1"
+                        className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-white/5 mr-1"
                         title="Modifier"
                       >
                         <Pencil size={14} />
                       </button>
                       <button
                         onClick={() => handleDelete(a.id)}
-                        className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-red-50 text-danger"
+                        className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger"
                         title="Supprimer"
                       >
                         <Trash2 size={14} />
@@ -162,13 +162,13 @@ export default function AbsencesPage() {
                       setEditing(a);
                       setShowModal(true);
                     }}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-white text-xs font-semibold"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-card text-xs font-semibold"
                   >
                     <Pencil size={13} /> Modifier
                   </button>
                   <button
                     onClick={() => handleDelete(a.id)}
-                    className="w-10 inline-flex items-center justify-center rounded-lg border border-border bg-white text-danger"
+                    className="w-10 inline-flex items-center justify-center rounded-lg border border-border bg-card text-danger"
                   >
                     <Trash2 size={15} />
                   </button>
@@ -261,7 +261,7 @@ function AbsenceModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-      <form onSubmit={handleSave} className="bg-white rounded-xl p-6 w-full max-w-md">
+      <form onSubmit={handleSave} className="bg-card rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold mb-4">
           {absence ? "Modifier l'absence" : "Nouvelle absence"}
         </h2>
@@ -273,7 +273,7 @@ function AbsenceModal({
               value={ouvrierId}
               onChange={(e) => setOuvrierId(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-white"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-card"
             >
               <option value="">Sélectionner…</option>
               {ouvriers.map((o) => (
@@ -294,8 +294,8 @@ function AbsenceModal({
                   onClick={() => setType(t)}
                   className={`flex-1 px-3 py-2 rounded-lg text-sm font-semibold border ${
                     type === t
-                      ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
-                      : "bg-white border-border text-muted"
+                      ? "bg-accent text-background border-accent"
+                      : "bg-card border-border text-muted"
                   }`}
                 >
                   {TYPE_LABEL[t]}
@@ -315,7 +315,7 @@ function AbsenceModal({
                   if (!dateFin || dateFin < e.target.value) setDateFin(e.target.value);
                 }}
                 required
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-white"
+                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-card"
               />
             </div>
             <div>
@@ -326,7 +326,7 @@ function AbsenceModal({
                 min={dateDebut || undefined}
                 onChange={(e) => setDateFin(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-white"
+                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-card"
               />
             </div>
           </div>
@@ -347,14 +347,14 @@ function AbsenceModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-border bg-white text-sm font-semibold"
+            className="px-4 py-2 rounded-lg border border-border bg-card text-sm font-semibold"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-4 py-2 rounded-lg bg-[#1a1a1a] text-white text-sm font-semibold disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-accent text-background text-sm font-semibold disabled:opacity-50"
           >
             {saving ? "Enregistrement..." : "Enregistrer"}
           </button>

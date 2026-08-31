@@ -76,27 +76,27 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafaf9]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <Image src="/logo.png" alt="BIG LIGHT" width={120} height={80} className="h-20 w-auto mb-4" />
+          <Image src="/logo.png" alt="BIG LIGHT" width={213} height={80} className="h-20 w-auto mb-4" />
           <h1 className="text-2xl font-bold">Nouveau mot de passe</h1>
           <p className="text-sm text-muted mt-1">Choisis un nouveau mot de passe administrateur</p>
         </div>
 
-        <div className="bg-white border border-border rounded-2xl p-6 shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
           {phase === "verifying" && (
             <p className="text-sm text-muted text-center py-4">Vérification du lien...</p>
           )}
 
           {phase === "error" && (
             <div className="space-y-4">
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+              <div className="p-3 bg-danger/10 border border-danger/30 rounded-lg text-sm text-danger">
                 Ce lien de réinitialisation est invalide ou a expiré.
               </div>
               <Link
                 href="/forgot-password"
-                className="flex items-center justify-center gap-2 w-full bg-[#1a1a1a] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-black"
+                className="flex items-center justify-center gap-2 w-full bg-accent text-background py-2.5 rounded-lg text-sm font-semibold hover:opacity-90"
               >
                 Refaire une demande
               </Link>
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
           )}
 
           {phase === "done" && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+            <div className="p-3 bg-success/10 border border-success/30 rounded-lg text-sm text-success">
               Mot de passe mis à jour. Redirection vers la connexion...
             </div>
           )}
@@ -142,7 +142,7 @@ export default function ResetPasswordPage() {
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800">
+                <div className="p-3 bg-danger/10 border border-danger/30 rounded-lg text-xs text-danger">
                   {error}
                 </div>
               )}
@@ -150,7 +150,7 @@ export default function ResetPasswordPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full bg-[#1a1a1a] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-black disabled:opacity-50"
+                className="w-full bg-accent text-background py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Enregistrement..." : "Définir le mot de passe"}
               </button>

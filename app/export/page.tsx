@@ -183,13 +183,13 @@ export default function ExportPage() {
               type="month"
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-white"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-card"
             />
           </div>
           <button
             onClick={handleExportExcel}
             disabled={loading || columns.length === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] text-white rounded-lg text-sm font-semibold hover:bg-black disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
           >
             <Download size={16} />
             Télécharger Excel
@@ -201,7 +201,7 @@ export default function ExportPage() {
         <h3 className="font-bold text-sm mb-4 capitalize">Aperçu — {monthLabel}</h3>
 
         {!loading && anomalies.length > 0 && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900">
+          <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-lg text-xs text-warning">
             <div className="font-semibold mb-1">
               ⚠ {anomalies.length} journée{anomalies.length > 1 ? "s" : ""} sans pointage de fin —
               temps non comptabilisé, à corriger avant la paie :
@@ -288,7 +288,7 @@ export default function ExportPage() {
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800">
+            <div className="mt-4 p-3 bg-success/10 border border-success/30 rounded-lg text-xs text-success">
               ✓ Export conforme au Code du travail luxembourgeois (décompte fiable — CJUE 2019)
             </div>
           </>

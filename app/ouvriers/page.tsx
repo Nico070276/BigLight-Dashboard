@@ -44,7 +44,7 @@ export default function OuvriersPage() {
       <TopBar title="Ouvriers">
         <button
           onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] text-white rounded-lg text-sm font-semibold hover:bg-black"
+          className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg text-sm font-semibold hover:opacity-90"
         >
           <Plus size={16} />
           Ajouter un ouvrier
@@ -83,16 +83,16 @@ export default function OuvriersPage() {
                     <td className="p-3">{o.telephone ?? "—"}</td>
                     <td className="p-3">
                       {o.actif ? (
-                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">● Actif</span>
+                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success/15 text-success">● Actif</span>
                       ) : (
-                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Inactif</span>
+                        <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-muted">Inactif</span>
                       )}
                     </td>
                     <td className="p-3 text-right">
-                      <button onClick={() => handleEdit(o)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-black/5 mr-1" title="Modifier">
+                      <button onClick={() => handleEdit(o)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-white/5 mr-1" title="Modifier">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => handleDelete(o.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-red-50 text-danger" title="Supprimer">
+                      <button onClick={() => handleDelete(o.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger" title="Supprimer">
                         <Trash2 size={14} />
                       </button>
                     </td>
@@ -111,18 +111,18 @@ export default function OuvriersPage() {
                     {o.telephone && <div className="text-xs text-muted mt-0.5">{o.telephone}</div>}
                   </div>
                   {o.actif ? (
-                    <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-800">● Actif</span>
+                    <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-success/15 text-success">● Actif</span>
                   ) : (
-                    <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600">Inactif</span>
+                    <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-muted">Inactif</span>
                   )}
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   <code className="bg-black/5 px-2 py-0.5 rounded text-xs">PIN ••••</code>
                   <div className="flex gap-2">
-                    <button onClick={() => handleEdit(o)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white" title="Modifier">
+                    <button onClick={() => handleEdit(o)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card" title="Modifier">
                       <Pencil size={15} />
                     </button>
-                    <button onClick={() => handleDelete(o.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white text-danger" title="Supprimer">
+                    <button onClick={() => handleDelete(o.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card text-danger" title="Supprimer">
                       <Trash2 size={15} />
                     </button>
                   </div>
@@ -207,7 +207,7 @@ function OuvrierModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-      <form onSubmit={handleSave} className="bg-white rounded-xl p-6 w-full max-w-md">
+      <form onSubmit={handleSave} className="bg-card rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold mb-4">{ouvrier ? "Modifier l'ouvrier" : "Nouvel ouvrier"}</h2>
 
         <div className="space-y-3">
@@ -230,10 +230,10 @@ function OuvrierModal({
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-white text-sm font-semibold">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-card text-sm font-semibold">
             Annuler
           </button>
-          <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-[#1a1a1a] text-white text-sm font-semibold disabled:opacity-50">
+          <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-accent text-background text-sm font-semibold disabled:opacity-50">
             {saving ? "Enregistrement..." : "Enregistrer"}
           </button>
         </div>

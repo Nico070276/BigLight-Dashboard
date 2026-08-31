@@ -46,7 +46,7 @@ export default function Sidebar() {
   const content = (
     <>
       <div className="flex items-center gap-2 pb-4 mb-4 border-b border-border">
-        <Image src="/logo.png" alt="BIG LIGHT" width={40} height={40} className="h-10 w-auto" />
+        <Image src="/logo.png" alt="BIG LIGHT" width={107} height={40} className="h-10 w-auto" />
         <span className="font-bold text-sm">Pointage</span>
       </div>
 
@@ -59,8 +59,8 @@ export default function Sidebar() {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active
-                  ? "bg-[#1a1a1a] text-white"
-                  : "text-muted hover:bg-black/5 hover:text-foreground"
+                  ? "bg-accent text-background"
+                  : "text-muted hover:bg-white/5 hover:text-foreground"
               }`}
             >
               <Icon size={18} />
@@ -73,14 +73,14 @@ export default function Sidebar() {
       <div className="mt-auto pt-4 border-t border-border">
         <Link
           href="/parametres"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-black/5 hover:text-foreground"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-white/5 hover:text-foreground"
         >
           <Settings size={16} />
           Paramètres
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-black/5 hover:text-foreground"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-white/5 hover:text-foreground"
         >
           <LogOut size={16} />
           Déconnexion
@@ -96,19 +96,19 @@ export default function Sidebar() {
 
   return (
     <>
-      <header className="md:hidden sticky top-0 z-30 flex items-center gap-3 bg-[#fafaf9] border-b border-border px-4 py-3">
+      <header className="md:hidden sticky top-0 z-30 flex items-center gap-3 bg-background border-b border-border px-4 py-3">
         <button
           onClick={() => setOpen(true)}
-          className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white"
+          className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card"
           aria-label="Ouvrir le menu"
         >
           <Menu size={18} />
         </button>
-        <Image src="/logo.png" alt="BIG LIGHT" width={32} height={32} className="h-8 w-auto" />
+        <Image src="/logo.png" alt="BIG LIGHT" width={85} height={32} className="h-8 w-auto" />
         <span className="font-bold text-sm">Pointage</span>
       </header>
 
-      <aside className="hidden md:flex w-60 bg-[#fafaf9] border-r border-border flex-col p-4 min-h-screen">
+      <aside className="hidden md:flex w-60 bg-background border-r border-border flex-col p-4 min-h-screen">
         {content}
       </aside>
 
@@ -118,10 +118,10 @@ export default function Sidebar() {
             className="absolute inset-0 bg-black/40"
             onClick={() => setOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85%] bg-[#fafaf9] border-r border-border flex flex-col p-4 overflow-y-auto">
+          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85%] bg-background border-r border-border flex flex-col p-4 overflow-y-auto">
             <button
               onClick={() => setOpen(false)}
-              className="self-end w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-white mb-2"
+              className="self-end w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card mb-2"
               aria-label="Fermer le menu"
             >
               <X size={18} />

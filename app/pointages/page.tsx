@@ -112,12 +112,12 @@ export default function PointagesPage() {
           type="date"
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
-          className="px-3 py-2 border border-border bg-white rounded-lg text-sm"
+          className="px-3 py-2 border border-border bg-card rounded-lg text-sm"
         />
         {dateFilter && (
           <button
             onClick={() => setDateFilter("")}
-            className="px-3 py-2 border border-border bg-white rounded-lg text-sm font-semibold"
+            className="px-3 py-2 border border-border bg-card rounded-lg text-sm font-semibold"
           >
             Effacer
           </button>
@@ -152,7 +152,7 @@ export default function PointagesPage() {
                     <td className="p-3 font-semibold">
                       {j.ouvrierNom}
                       {j.manuel && (
-                        <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-blue-50 text-blue-700" title="Journée contenant une correction manuelle">
+                        <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-info/15 text-info" title="Journée contenant une correction manuelle">
                           corrigé
                         </span>
                       )}
@@ -161,7 +161,7 @@ export default function PointagesPage() {
                     <td className="p-3">{j.debut ?? "—"}</td>
                     <td className="p-3">{j.pauseMin > 0 ? `${j.pauseMin} min` : "—"}</td>
                     <td className="p-3">
-                      {j.fin ?? <span className="text-amber-600 font-semibold" title="Pointage de fin manquant">⚠ manquant</span>}
+                      {j.fin ?? <span className="text-warning font-semibold" title="Pointage de fin manquant">⚠ manquant</span>}
                     </td>
                     <td className="p-3 font-semibold">{formatDuration(j.totalMin)}</td>
                     <td className="p-3">
@@ -174,7 +174,7 @@ export default function PointagesPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title={`${TYPE_LABEL[g.type]} · ${g.time}${g.accuracy ? ` · ±${Math.round(g.accuracy)}m` : ""}`}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-border bg-white text-xs hover:bg-black/5"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-border bg-card text-xs hover:bg-white/5"
                             >
                               <MapPin size={11} />
                               {TYPE_LABEL[g.type]}
@@ -186,7 +186,7 @@ export default function PointagesPage() {
                     <td className="p-3 text-right">
                       <button
                         onClick={() => setEditing(j)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-white text-xs font-semibold hover:bg-black/5"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-card text-xs font-semibold hover:bg-white/5"
                         title="Corriger cette journée"
                       >
                         <Pencil size={13} />
@@ -206,7 +206,7 @@ export default function PointagesPage() {
                     <div className="font-semibold truncate">
                       {j.ouvrierNom}
                       {j.manuel && (
-                        <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-blue-50 text-blue-700">
+                        <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-info/15 text-info">
                           corrigé
                         </span>
                       )}
@@ -230,7 +230,7 @@ export default function PointagesPage() {
                   <div>
                     <div className="text-muted">Fin</div>
                     <div className="font-medium">
-                      {j.fin ?? <span className="text-amber-600 font-semibold">⚠</span>}
+                      {j.fin ?? <span className="text-warning font-semibold">⚠</span>}
                     </div>
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export default function PointagesPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title={g.accuracy ? `±${Math.round(g.accuracy)}m` : undefined}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-white text-xs"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-card text-xs"
                       >
                         <MapPin size={12} />
                         {TYPE_LABEL[g.type]} · {g.time}
@@ -253,7 +253,7 @@ export default function PointagesPage() {
                 )}
                 <button
                   onClick={() => setEditing(j)}
-                  className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-white text-xs font-semibold"
+                  className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-border bg-card text-xs font-semibold"
                 >
                   <Pencil size={13} />
                   Corriger
@@ -407,7 +407,7 @@ function JourneeEditModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div className="bg-card rounded-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         <div className="flex items-start justify-between p-5 border-b border-border">
           <div>
             <h2 className="text-lg font-bold">Corriger la journée</h2>
@@ -415,7 +415,7 @@ function JourneeEditModal({
               {journee.ouvrierNom} · {new Date(journee.date).toLocaleDateString("fr-FR")}
             </p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-black/5">
+          <button onClick={onClose} className="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-white/5">
             <X size={18} />
           </button>
         </div>
@@ -431,7 +431,7 @@ function JourneeEditModal({
               <select
                 value={d.type}
                 onChange={(e) => update(d.key, { type: e.target.value as PType })}
-                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-white"
+                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-card"
               >
                 {TYPES.map((tp) => (
                   <option key={tp} value={tp}>{TYPE_LABEL[tp]}</option>
@@ -441,12 +441,12 @@ function JourneeEditModal({
                 type="datetime-local"
                 value={d.datetime}
                 onChange={(e) => update(d.key, { datetime: e.target.value })}
-                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-white"
+                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-card"
               />
               <select
                 value={d.chantierId ?? ""}
                 onChange={(e) => update(d.key, { chantierId: e.target.value || null })}
-                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-white min-w-0 flex-1"
+                className="px-2 py-1.5 border border-border rounded-lg text-sm bg-card min-w-0 flex-1"
               >
                 <option value="">(sans chantier)</option>
                 {chantiers.map((c) => (
@@ -454,13 +454,13 @@ function JourneeEditModal({
                 ))}
               </select>
               {d.id === null && (
-                <span className="text-[10px] uppercase font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] uppercase font-semibold text-info bg-info/15 px-1.5 py-0.5 rounded">
                   Ajout
                 </span>
               )}
               <button
                 onClick={() => remove(d.key)}
-                className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-white hover:bg-red-50 text-danger"
+                className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger"
                 title="Supprimer ce pointage"
               >
                 <Trash2 size={14} />
@@ -470,7 +470,7 @@ function JourneeEditModal({
 
           <button
             onClick={addRow}
-            className="mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-border text-sm font-semibold hover:bg-black/5"
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-border text-sm font-semibold hover:bg-white/5"
           >
             <Plus size={15} />
             Ajouter un pointage
@@ -492,7 +492,7 @@ function JourneeEditModal({
                     <li key={h.id} className="flex items-center gap-2 text-xs">
                       <span
                         className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                          h.source === "admin" ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-600"
+                          h.source === "admin" ? "bg-info/15 text-info" : "bg-white/10 text-muted"
                         }`}
                       >
                         {h.source === "admin" ? "Manuel" : "App"}
@@ -518,13 +518,13 @@ function JourneeEditModal({
         </div>
 
         <div className="flex justify-end gap-2 p-5 border-t border-border">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-white text-sm font-semibold">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-border bg-card text-sm font-semibold">
             Annuler
           </button>
           <button
             onClick={save}
             disabled={saving}
-            className="px-4 py-2 rounded-lg bg-[#1a1a1a] text-white text-sm font-semibold disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-accent text-background text-sm font-semibold disabled:opacity-50"
           >
             {saving ? "Enregistrement..." : "Enregistrer les corrections"}
           </button>

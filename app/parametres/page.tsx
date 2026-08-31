@@ -95,8 +95,8 @@ export default function ParametresPage() {
               <div
                 className={`p-3 rounded-lg text-xs ${
                   message.type === "ok"
-                    ? "bg-green-50 border border-green-200 text-green-800"
-                    : "bg-red-50 border border-red-200 text-red-800"
+                    ? "bg-success/10 border border-success/30 text-success"
+                    : "bg-danger/10 border border-danger/30 text-danger"
                 }`}
               >
                 {message.text}
@@ -106,7 +106,7 @@ export default function ParametresPage() {
             <button
               type="submit"
               disabled={saving}
-              className="bg-[#1a1a1a] text-white px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-black disabled:opacity-50"
+              className="bg-accent text-background px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
             >
               {saving ? "Enregistrement..." : "Mettre à jour le mot de passe"}
             </button>
