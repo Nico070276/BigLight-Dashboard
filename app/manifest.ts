@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Dashboard de gestion du pointage des ouvriers",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#0f172a",
+    background_color: "#111110",
+    theme_color: "#111110",
     lang: "fr",
     icons: [
       {

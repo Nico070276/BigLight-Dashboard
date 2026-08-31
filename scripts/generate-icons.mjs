@@ -1,3 +1,6 @@
+// BIG LIGHT — Génère les icônes PWA (favicon, écran d'accueil mobile)
+// à partir d'un anneau doré stylisé, dans l'esprit du logo (fond sombre du
+// thème + anneau doré ouvert, plutôt qu'un texte illisible à petite taille).
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -5,30 +8,39 @@ import path from "node:path";
 const outDir = path.resolve("public/icons");
 await mkdir(outDir, { recursive: true });
 
-const BG = "#0f172a";
-const FG = "#ffffff";
-const ACCENT = "#f59e0b";
+const BG = "#111110";
+const GOLD = "#ceb889";
 
 function iconSvg(size, { maskable = false } = {}) {
-  const safe = maskable ? 0.72 : 1;
+  // Zone de sécurité réduite pour les icônes "maskable" (Android peut rogner
+  // les bords en cercle/carré arrondi selon le launcher).
+  const safe = maskable ? 0.66 : 0.86;
   const radius = maskable ? 0 : size * 0.22;
   const cx = size / 2;
   const cy = size / 2;
-  const bigFont = size * 0.34 * safe;
-  const smallFont = size * 0.22 * safe;
-  const rOffset = -size * 0.02 * safe;
-  const numOffset = size * 0.22 * safe;
-  const barY = cy + size * 0.33 * safe;
-  const barW = size * 0.42 * safe;
+  const ringR = (size * safe) / 2;
+  const strokeW = size * 0.09 * (safe / 0.86);
+  // Anneau ouvert : un arc de ~290° (gap de 70° en haut à droite), comme le
+  // motif du logo réel.
+  const startAngle = -200; // degrés
+  const endAngle = 90;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const x1 = cx + ringR * Math.cos(toRad(startAngle));
+  const y1 = cy + ringR * Math.sin(toRad(startAngle));
+  const x2 = cx + ringR * Math.cos(toRad(endAngle));
+  const y2 = cy + ringR * Math.sin(toRad(endAngle));
+  const largeArc = endAngle - startAngle <= 180 ? 0 : 1;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <rect width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="${BG}"/>
-  <g font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="700" text-anchor="middle">
-    <text x="${cx}" y="${cy + rOffset}" font-size="${bigFont}" fill="${FG}" dominant-baseline="middle">R</text>
-    <text x="${cx}" y="${cy + numOffset}" font-size="${smallFont}" fill="${FG}" dominant-baseline="middle" letter-spacing="1">352</text>
-  </g>
-  <rect x="${cx - barW / 2}" y="${barY}" width="${barW}" height="${size * 0.018}" rx="${size * 0.009}" fill="${ACCENT}"/>
+  <path
+    d="M ${x1} ${y1} A ${ringR} ${ringR} 0 ${largeArc} 1 ${x2} ${y2}"
+    fill="none"
+    stroke="${GOLD}"
+    stroke-width="${strokeW}"
+    stroke-linecap="round"
+  />
 </svg>`;
 }
 
