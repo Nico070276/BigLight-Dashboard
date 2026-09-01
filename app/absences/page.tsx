@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   supabase,
-  type Ouvrier,
+  type Salarie,
   type Absence,
   type AbsenceWithRelations,
 } from "@/lib/supabase";
@@ -32,7 +32,7 @@ function formatDate(iso: string) {
 
 export default function AbsencesPage() {
   const [absences, setAbsences] = useState<AbsenceWithRelations[]>([]);
-  const [ouvriers, setOuvriers] = useState<Ouvrier[]>([]);
+  const [salaries, setSalaries] = useState<Salarie[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<AbsenceWithRelations | null>(null);
@@ -41,7 +41,7 @@ export default function AbsencesPage() {
     setLoading(true);
     const { data } = await supabase
       .from("absences")
-      .select("*, ouvriers(nom, prenom)")
+      .select("*, salaries(nom, prenom)")
       .order("date_debut", { ascending: false });
     setAbsences((data as AbsenceWithRelations[]) ?? []);
     setLoading(false);
@@ -50,11 +50,11 @@ export default function AbsencesPage() {
   useEffect(() => {
     load();
     supabase
-      .from("ouvriers")
+      .from("salaries")
       .select("*")
       .eq("actif", true)
       .order("nom")
-      .then(({ data }) => setOuvriers(data ?? []));
+      .then(({ data }) => setSalaries(data ?? []));
   }, []);
 
   async function handleDelete(id: string) {
@@ -90,7 +90,7 @@ export default function AbsencesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-black/[0.02] text-xs uppercase tracking-wider text-muted">
-                  <th className="text-left p-3 font-semibold">Ouvrier</th>
+                  <th className="text-left p-3 font-semibold">Salarié</th>
                   <th className="text-left p-3 font-semibold">Type</th>
                   <th className="text-left p-3 font-semibold">Du</th>
                   <th className="text-left p-3 font-semibold">Au</th>
@@ -103,7 +103,7 @@ export default function AbsencesPage() {
                 {absences.map((a) => (
                   <tr key={a.id} className="border-t border-border">
                     <td className="p-3 font-semibold">
-                      {a.ouvriers ? `${a.ouvriers.prenom} ${a.ouvriers.nom}` : "—"}
+                      {a.salaries ? `${a.salaries.prenom} ${a.salaries.nom}` : "—"}
                     </td>
                     <td className="p-3">
                       <TypeBadge type={a.type} />
@@ -142,7 +142,7 @@ export default function AbsencesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold truncate">
-                      {a.ouvriers ? `${a.ouvriers.prenom} ${a.ouvriers.nom}` : "—"}
+                      {a.salaries ? `${a.salaries.prenom} ${a.salaries.nom}` : "—"}
                     </div>
                     <div className="mt-1">
                       <TypeBadge type={a.type} />
@@ -182,7 +182,7 @@ export default function AbsencesPage() {
       {showModal && (
         <AbsenceModal
           absence={editing}
-          ouvriers={ouvriers}
+          salaries={salaries}
           onClose={() => setShowModal(false)}
           onSaved={() => {
             setShowModal(false);
@@ -208,16 +208,16 @@ function TypeBadge({ type }: { type: Absence["type"] }) {
 
 function AbsenceModal({
   absence,
-  ouvriers,
+  salaries,
   onClose,
   onSaved,
 }: {
   absence: AbsenceWithRelations | null;
-  ouvriers: Ouvrier[];
+  salaries: Salarie[];
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [ouvrierId, setOuvrierId] = useState(absence?.ouvrier_id ?? "");
+  const [salarieId, setSalarieId] = useState(absence?.salarie_id ?? "");
   const [type, setType] = useState<Absence["type"]>(absence?.type ?? "conge");
   const [dateDebut, setDateDebut] = useState(absence?.date_debut ?? "");
   const [dateFin, setDateFin] = useState(absence?.date_fin ?? "");
@@ -226,8 +226,8 @@ function AbsenceModal({
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!ouvrierId) {
-      alert("Sélectionnez un ouvrier.");
+    if (!salarieId) {
+      alert("Sélectionnez un salarié.");
       return;
     }
     if (!dateDebut || !dateFin) {
@@ -240,7 +240,7 @@ function AbsenceModal({
     }
     setSaving(true);
     const payload = {
-      ouvrier_id: ouvrierId,
+      salarie_id: salarieId,
       type,
       date_debut: dateDebut,
       date_fin: dateFin,
@@ -268,17 +268,17 @@ function AbsenceModal({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-muted mb-1">Ouvrier</label>
+            <label className="block text-xs font-medium text-muted mb-1">Salarié</label>
             <select
-              value={ouvrierId}
-              onChange={(e) => setOuvrierId(e.target.value)}
+              value={salarieId}
+              onChange={(e) => setSalarieId(e.target.value)}
               required
               className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-card"
             >
               <option value="">Sélectionner…</option>
-              {ouvriers.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.prenom} {o.nom}
+              {salaries.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.prenom} {s.nom}
                 </option>
               ))}
             </select>

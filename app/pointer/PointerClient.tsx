@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-// Composant de pointage WEB dédié à UN seul ouvrier, pour iPhone (pas d'APK iOS).
-// Même backend (RPC worker_*) que l'app mobile. L'ouvrier est passé en prop ;
-// les clés localStorage sont isolées par ouvrier pour éviter tout croisement.
-export type PointerOuvrier = { id: string; prenom: string; nom: string };
+// Composant de pointage WEB dédié à UN seul salarié, pour iPhone (pas d'APK iOS).
+// Même backend (RPC worker_*) que l'app mobile. Le salarié est passé en prop ;
+// les clés localStorage sont isolées par salarié pour éviter tout croisement.
+export type PointerSalarie = { id: string; prenom: string; nom: string };
 
 type Chantier = { id: string; nom: string; adresse: string | null; statut: string };
 type PType = "debut" | "pause" | "reprise" | "fin";
@@ -165,9 +165,9 @@ function getCoords(): Promise<{ lat: number; lng: number; acc: number | null }> 
 
 type Phase = "loading" | "login" | "chantier" | "pointage";
 
-export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) {
-  const PIN_KEY = `biglight.pointer.pin.${ouvrier.id}`;
-  const CHANTIER_KEY = `biglight.pointer.chantier.${ouvrier.id}`;
+export default function PointerClient({ salarie }: { salarie: PointerSalarie }) {
+  const PIN_KEY = `biglight.pointer.pin.${salarie.id}`;
+  const CHANTIER_KEY = `biglight.pointer.chantier.${salarie.id}`;
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [pin, setPin] = useState<string>("");
@@ -192,10 +192,10 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
     return list;
   }
 
-  const refresh = useCallback(async (curPin: string, ouvrierId: string): Promise<Hours | null> => {
+  const refresh = useCallback(async (curPin: string, salarieId: string): Promise<Hours | null> => {
     const [l, h] = await Promise.all([
-      supabase.rpc("worker_last_pointage_today", { p_ouvrier_id: ouvrierId, p_pin: curPin }),
-      supabase.rpc("worker_month_pointages", { p_ouvrier_id: ouvrierId, p_pin: curPin }),
+      supabase.rpc("worker_last_pointage_today", { p_salarie_id: salarieId, p_pin: curPin }),
+      supabase.rpc("worker_month_pointages", { p_salarie_id: salarieId, p_pin: curPin }),
     ]);
     if (l.error) throw l.error;
     const rows = (l.data as { type: PType; ts: string }[]) ?? [];
@@ -221,7 +221,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
         const found = savedCh ? list.find((c) => c.id === savedCh) : null;
         if (found) {
           setChantier(found);
-          await refresh(savedPin, ouvrier.id);
+          await refresh(savedPin, salarie.id);
           setPhase("pointage");
         } else {
           setPhase("chantier");
@@ -241,7 +241,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
     setError(null);
     try {
       const { data, error: e2 } = await supabase.rpc("worker_login", {
-        p_ouvrier_id: ouvrier.id,
+        p_salarie_id: salarie.id,
         p_pin: pinInput,
       });
       if (e2) throw e2;
@@ -272,7 +272,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
     setChantier(c);
     localStorage.setItem(CHANTIER_KEY, c.id);
     setPhase("pointage");
-    refresh(pin, ouvrier.id).catch(() => {});
+    refresh(pin, salarie.id).catch(() => {});
   }
 
   function logout() {
@@ -299,7 +299,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
         return;
       }
       const { error: e } = await supabase.rpc("worker_record_pointage", {
-        p_ouvrier_id: ouvrier.id,
+        p_salarie_id: salarie.id,
         p_pin: pin,
         p_chantier_id: chantier.id,
         p_type: type,
@@ -308,7 +308,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
         p_accuracy: coords.acc,
       });
       if (e) throw e;
-      const fresh = await refresh(pin, ouvrier.id);
+      const fresh = await refresh(pin, salarie.id);
       if (type === "fin" && fresh) setRecap(fresh);
     } catch {
       alert(L.saveError);
@@ -331,7 +331,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
       <div className="flex-1 flex flex-col justify-center">
         <h1 className="text-3xl font-bold mb-1">{L.app}</h1>
         <p className="text-[#94a3b8] mb-6">
-          {ouvrier.prenom} {ouvrier.nom}
+          {salarie.prenom} {salarie.nom}
         </p>
         <form onSubmit={handleLogin}>
           <p className="text-[#94a3b8] mb-2">{L.enterPin}</p>
@@ -364,7 +364,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
       <>
         <div className="flex items-center justify-between mb-6">
           <span className="font-semibold">
-            {ouvrier.prenom} {ouvrier.nom}
+            {salarie.prenom} {salarie.nom}
           </span>
           <button onClick={logout} className="text-[#f59e0b]">
             {L.logout}
@@ -393,7 +393,7 @@ export default function PointerClient({ ouvrier }: { ouvrier: PointerOuvrier }) 
     <>
       <div className="flex items-center justify-between mb-4">
         <span className="font-semibold">
-          {ouvrier.prenom} {ouvrier.nom}
+          {salarie.prenom} {salarie.nom}
         </span>
         <button onClick={() => setPhase("chantier")} className="text-[#f59e0b]">
           {L.change}

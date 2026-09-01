@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   supabase,
-  type Ouvrier,
+  type Salarie,
   type Absence,
   type PointageWithRelations,
 } from "@/lib/supabase";
@@ -29,7 +29,7 @@ type DayCell =
   | { kind: "empty" };
 
 type Column = {
-  ouvrierId: string;
+  salarieId: string;
   nom: string;
   cells: Record<string, DayCell>; // dayKey -> cell
   totalMin: number;
@@ -39,11 +39,11 @@ type Column = {
   parChantier: Record<string, number>;
 };
 
-type Anomaly = { ouvrierNom: string; date: string };
+type Anomaly = { salarieNom: string; date: string };
 type DayInfo = { key: string; num: number; weekday: string; weekend: boolean };
 
 export default function ExportPage() {
-  const [ouvriers, setOuvriers] = useState<Ouvrier[]>([]);
+  const [salaries, setSalaries] = useState<Salarie[]>([]);
   const [pointages, setPointages] = useState<PointageWithRelations[]>([]);
   const [absences, setAbsences] = useState<Absence[]>([]);
   const [month, setMonth] = useState<string>(() => new Date().toISOString().slice(0, 7));
@@ -57,11 +57,11 @@ export default function ExportPage() {
       const end = new Date(y, m, 1);
       const monthEndDate = `${month}-${String(new Date(y, m, 0).getDate()).padStart(2, "0")}`;
 
-      const [ouvriersRes, pointagesRes, absencesRes] = await Promise.all([
-        supabase.from("ouvriers").select("*").order("nom"),
+      const [salariesRes, pointagesRes, absencesRes] = await Promise.all([
+        supabase.from("salaries").select("*").order("nom"),
         supabase
           .from("pointages")
-          .select("*, ouvriers(nom, prenom), chantiers(nom)")
+          .select("*, salaries(nom, prenom), chantiers(nom)")
           .gte("timestamp", start.toISOString())
           .lt("timestamp", end.toISOString())
           .order("timestamp"),
@@ -73,7 +73,7 @@ export default function ExportPage() {
           .gte("date_fin", `${month}-01`),
       ]);
 
-      setOuvriers(ouvriersRes.data ?? []);
+      setSalaries(salariesRes.data ?? []);
       setPointages(pointagesRes.data ?? []);
       setAbsences((absencesRes.data as Absence[]) ?? []);
       setLoading(false);
@@ -100,8 +100,8 @@ export default function ExportPage() {
   }, [month]);
 
   const { columns, anomalies } = useMemo(
-    () => computeGrid(ouvriers, pointages, absences, days),
-    [ouvriers, pointages, absences, days]
+    () => computeGrid(salaries, pointages, absences, days),
+    [salaries, pointages, absences, days]
   );
 
   const grandTotalMin = columns.reduce((s, c) => s + c.totalMin, 0);
@@ -139,9 +139,9 @@ export default function ExportPage() {
     ];
     XLSX.utils.book_append_sheet(wb, ws, "Grille");
 
-    // --- Feuille 2 : résumé par ouvrier ---
+    // --- Feuille 2 : résumé par salarié ---
     const summary: Record<string, string | number>[] = columns.map((c) => ({
-      Ouvrier: c.nom,
+      "Salarié": c.nom,
       "Jours travaillés": c.joursTravailles,
       "Heures travaillées": toHours(c.totalMin),
       "Jours congé": c.joursConge,
@@ -151,7 +151,7 @@ export default function ExportPage() {
         .join(" | "),
     }));
     summary.push({
-      Ouvrier: "TOTAL ÉQUIPE",
+      "Salarié": "TOTAL ÉQUIPE",
       "Jours travaillés": columns.reduce((s, c) => s + c.joursTravailles, 0),
       "Heures travaillées": toHours(grandTotalMin),
       "Jours congé": columns.reduce((s, c) => s + c.joursConge, 0),
@@ -209,7 +209,7 @@ export default function ExportPage() {
             <ul className="list-disc pl-5 space-y-0.5">
               {anomalies.map((a, i) => (
                 <li key={i}>
-                  {a.ouvrierNom} — {new Date(a.date).toLocaleDateString("fr-FR")}
+                  {a.salarieNom} — {new Date(a.date).toLocaleDateString("fr-FR")}
                 </li>
               ))}
             </ul>
@@ -234,7 +234,7 @@ export default function ExportPage() {
                   <tr className="text-xs uppercase tracking-wider text-muted">
                     <th className="text-left p-2 font-semibold sticky left-0 bg-card border-b border-border">Jour</th>
                     {columns.map((c) => (
-                      <th key={c.ouvrierId} className="p-2 font-semibold border-b border-border whitespace-nowrap text-center min-w-[70px]">
+                      <th key={c.salarieId} className="p-2 font-semibold border-b border-border whitespace-nowrap text-center min-w-[70px]">
                         {c.nom}
                       </th>
                     ))}
@@ -248,7 +248,7 @@ export default function ExportPage() {
                         {day.weekday}
                       </td>
                       {columns.map((c) => (
-                        <td key={c.ouvrierId} className="p-2 text-center border-b border-border/60">
+                        <td key={c.salarieId} className="p-2 text-center border-b border-border/60">
                           <CellView cell={c.cells[day.key]} />
                         </td>
                       ))}
@@ -257,25 +257,25 @@ export default function ExportPage() {
                   <tr className="font-bold border-t-2 border-border">
                     <td className="p-2 sticky left-0 bg-card">Total h</td>
                     {columns.map((c) => (
-                      <td key={c.ouvrierId} className="p-2 text-center">{toHours(c.totalMin)}</td>
+                      <td key={c.salarieId} className="p-2 text-center">{toHours(c.totalMin)}</td>
                     ))}
                   </tr>
                   <tr className="text-xs text-muted">
                     <td className="p-2 sticky left-0 bg-card">Jours travaillés</td>
                     {columns.map((c) => (
-                      <td key={c.ouvrierId} className="p-2 text-center">{c.joursTravailles}</td>
+                      <td key={c.salarieId} className="p-2 text-center">{c.joursTravailles}</td>
                     ))}
                   </tr>
                   <tr className="text-xs text-muted">
                     <td className="p-2 sticky left-0 bg-card">Congé (C)</td>
                     {columns.map((c) => (
-                      <td key={c.ouvrierId} className="p-2 text-center">{c.joursConge || "—"}</td>
+                      <td key={c.salarieId} className="p-2 text-center">{c.joursConge || "—"}</td>
                     ))}
                   </tr>
                   <tr className="text-xs text-muted">
                     <td className="p-2 sticky left-0 bg-card">Maladie (M)</td>
                     {columns.map((c) => (
-                      <td key={c.ouvrierId} className="p-2 text-center">{c.joursMaladie || "—"}</td>
+                      <td key={c.salarieId} className="p-2 text-center">{c.joursMaladie || "—"}</td>
                     ))}
                   </tr>
                 </tbody>
@@ -315,7 +315,7 @@ function cellToExcel(cell: DayCell | undefined): string | number {
 }
 
 function computeGrid(
-  ouvriers: Ouvrier[],
+  salaries: Salarie[],
   pointages: PointageWithRelations[],
   absences: Absence[],
   days: DayInfo[]
@@ -324,10 +324,10 @@ function computeGrid(
   const dayKeys = new Set(days.map((d) => d.key));
 
   const cols: Record<string, Column> = {};
-  for (const o of ouvriers) {
-    cols[o.id] = {
-      ouvrierId: o.id,
-      nom: `${o.prenom} ${o.nom}`,
+  for (const s of salaries) {
+    cols[s.id] = {
+      salarieId: s.id,
+      nom: `${s.prenom} ${s.nom}`,
       cells: {},
       totalMin: 0,
       joursTravailles: 0,
@@ -337,16 +337,16 @@ function computeGrid(
     };
   }
 
-  // 1. Heures travaillées, regroupées par ouvrier + jour
+  // 1. Heures travaillées, regroupées par salarié + jour
   const byDay: Record<string, PointageWithRelations[]> = {};
   for (const p of pointages) {
-    const key = `${p.ouvrier_id}::${p.timestamp.slice(0, 10)}`;
+    const key = `${p.salarie_id}::${p.timestamp.slice(0, 10)}`;
     (byDay[key] ??= []).push(p);
   }
 
   for (const list of Object.values(byDay)) {
     list.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-    const col = cols[list[0].ouvrier_id];
+    const col = cols[list[0].salarie_id];
     if (!col) continue;
     const dayKey = list[0].timestamp.slice(0, 10);
 
@@ -371,7 +371,7 @@ function computeGrid(
 
     // Journée sans « fin » : temps non comptabilisé, signalé.
     if (started !== null) {
-      anomalies.push({ ouvrierNom: col.nom, date: dayKey });
+      anomalies.push({ salarieNom: col.nom, date: dayKey });
     }
 
     if (dayMin > 0 && dayKeys.has(dayKey)) {
@@ -383,7 +383,7 @@ function computeGrid(
 
   // 2. Absences (n'écrasent pas une journée déjà travaillée)
   for (const a of absences) {
-    const col = cols[a.ouvrier_id];
+    const col = cols[a.salarie_id];
     if (!col) continue;
     for (const day of days) {
       if (day.key >= a.date_debut && day.key <= a.date_fin) {
@@ -396,7 +396,7 @@ function computeGrid(
     }
   }
 
-  // On ne garde que les ouvriers ayant une activité ou une absence ce mois-ci
+  // On ne garde que les salariés ayant une activité ou une absence ce mois-ci
   const columns = Object.values(cols).filter(
     (c) => c.totalMin > 0 || c.joursConge > 0 || c.joursMaladie > 0
   );

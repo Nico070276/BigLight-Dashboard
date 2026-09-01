@@ -20,7 +20,7 @@ import { createClient } from "@/lib/supabase-client";
 
 const navItems = [
   { href: "/", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/ouvriers", label: "Ouvriers", icon: Users },
+  { href: "/salaries", label: "Salariés", icon: Users },
   { href: "/chantiers", label: "Chantiers", icon: Building2 },
   { href: "/pointages", label: "Pointages", icon: Clock },
   { href: "/absences", label: "Congés / Maladie", icon: CalendarOff },

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase, type Ouvrier, type Chantier, type PointageWithRelations } from "@/lib/supabase";
+import { supabase, type Salarie, type Chantier, type PointageWithRelations } from "@/lib/supabase";
 import AppShell from "@/components/AppShell";
 import TopBar from "@/components/TopBar";
 import { RefreshCw } from "lucide-react";
 
 type WorkerStatus = {
-  ouvrier: Ouvrier;
+  salarie: Salarie;
   statut: "travail" | "pause" | "hors-ligne";
   chantier: string | null;
   debut: string | null;
@@ -26,7 +26,7 @@ function formatTime(iso: string) {
 }
 
 export default function DashboardPage() {
-  const [ouvriers, setOuvriers] = useState<Ouvrier[]>([]);
+  const [salaries, setSalaries] = useState<Salarie[]>([]);
   const [chantiers, setChantiers] = useState<Chantier[]>([]);
   const [pointagesJour, setPointagesJour] = useState<PointageWithRelations[]>([]);
   const [pointagesMois, setPointagesMois] = useState<PointageWithRelations[]>([]);
@@ -39,22 +39,22 @@ export default function DashboardPage() {
     today.setHours(0, 0, 0, 0);
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const [ouvriersRes, chantiersRes, jourRes, moisRes] = await Promise.all([
-      supabase.from("ouvriers").select("*").eq("actif", true).order("nom"),
+    const [salariesRes, chantiersRes, jourRes, moisRes] = await Promise.all([
+      supabase.from("salaries").select("*").eq("actif", true).order("nom"),
       supabase.from("chantiers").select("*").in("statut", ["actif", "demarrage"]),
       supabase
         .from("pointages")
-        .select("*, ouvriers(nom, prenom), chantiers(nom)")
+        .select("*, salaries(nom, prenom), chantiers(nom)")
         .gte("timestamp", today.toISOString())
         .order("timestamp", { ascending: true }),
       supabase
         .from("pointages")
-        .select("*, ouvriers(nom, prenom), chantiers(nom)")
+        .select("*, salaries(nom, prenom), chantiers(nom)")
         .gte("timestamp", monthStart.toISOString())
         .order("timestamp", { ascending: true }),
     ]);
 
-    setOuvriers(ouvriersRes.data ?? []);
+    setSalaries(salariesRes.data ?? []);
     setChantiers(chantiersRes.data ?? []);
     setPointagesJour(jourRes.data ?? []);
     setPointagesMois(moisRes.data ?? []);
@@ -67,15 +67,15 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const workerStatuses: WorkerStatus[] = ouvriers.map((o) => {
-    const pointages = pointagesJour.filter((p) => p.ouvrier_id === o.id);
+  const workerStatuses: WorkerStatus[] = salaries.map((s) => {
+    const pointages = pointagesJour.filter((p) => p.salarie_id === s.id);
     const last = pointages[pointages.length - 1];
 
     if (!last || last.type === "fin") {
-      return { ouvrier: o, statut: "hors-ligne", chantier: null, debut: null, dureeMin: 0 };
+      return { salarie: s, statut: "hors-ligne", chantier: null, debut: null, dureeMin: 0 };
     }
 
-    // Début de la session EN COURS = dernier "debut" du jour (un ouvrier
+    // Début de la session EN COURS = dernier "debut" du jour (un salarié
     // peut avoir clôturé puis redémarré une nouvelle session le même jour).
     const premier = [...pointages].reverse().find((p) => p.type === "debut");
     const debutTs = premier ? new Date(premier.timestamp).getTime() : Date.now();
@@ -83,7 +83,7 @@ export default function DashboardPage() {
     const chantier = pointages.find((p) => p.chantiers)?.chantiers?.nom ?? null;
 
     return {
-      ouvrier: o,
+      salarie: s,
       statut: last.type === "pause" ? "pause" : "travail",
       chantier,
       debut: premier ? formatTime(premier.timestamp) : null,
@@ -109,7 +109,7 @@ export default function DashboardPage() {
       </TopBar>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
-        <StatCard label="Ouvriers au travail" value={`${enTravail} / ${ouvriers.length}`} trend="● En ligne maintenant" />
+        <StatCard label="Salariés au travail" value={`${enTravail} / ${salaries.length}`} trend="● En ligne maintenant" />
         <StatCard label="Heures cette semaine" value={formatDuration(totalMinSemaine)} trend="Semaine en cours" />
         <StatCard label="Heures ce mois" value={formatDuration(totalMinMois)} trend={new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })} />
         <StatCard label="Chantiers actifs" value={String(chantiers.length)} trend="Actifs / en démarrage" />
@@ -118,12 +118,12 @@ export default function DashboardPage() {
       <div className="bg-card border border-border rounded-xl p-5">
         <h3 className="font-bold text-sm mb-4">Activité en direct — aujourd&apos;hui</h3>
         {workerStatuses.length === 0 ? (
-          <EmptyState message="Aucun ouvrier enregistré. Ajoutez-en dans l'onglet Ouvriers." />
+          <EmptyState message="Aucun salarié enregistré. Ajoutez-en dans l'onglet Salariés." />
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-black/[0.02] text-xs uppercase tracking-wider text-muted">
-                <th className="text-left p-3 font-semibold">Ouvrier</th>
+                <th className="text-left p-3 font-semibold">Salarié</th>
                 <th className="text-left p-3 font-semibold">Statut</th>
                 <th className="text-left p-3 font-semibold">Chantier</th>
                 <th className="text-left p-3 font-semibold">Début</th>
@@ -132,8 +132,8 @@ export default function DashboardPage() {
             </thead>
             <tbody>
               {workerStatuses.map((w) => (
-                <tr key={w.ouvrier.id} className="border-t border-border">
-                  <td className="p-3 font-semibold">{w.ouvrier.prenom} {w.ouvrier.nom}</td>
+                <tr key={w.salarie.id} className="border-t border-border">
+                  <td className="p-3 font-semibold">{w.salarie.prenom} {w.salarie.nom}</td>
                   <td className="p-3"><StatusTag statut={w.statut} /></td>
                   <td className="p-3">{w.chantier ?? "—"}</td>
                   <td className="p-3">{w.debut ?? "—"}</td>
@@ -176,16 +176,16 @@ function EmptyState({ message }: { message: string }) {
 }
 
 function calcTotalMinutes(pointages: PointageWithRelations[]): number {
-  // Group by (ouvrier, day), compute work - pause durations
-  const byOuvrierDay: Record<string, PointageWithRelations[]> = {};
+  // Group by (salarié, day), compute work - pause durations
+  const bySalarieDay: Record<string, PointageWithRelations[]> = {};
   for (const p of pointages) {
     const day = p.timestamp.slice(0, 10);
-    const key = `${p.ouvrier_id}-${day}`;
-    (byOuvrierDay[key] ??= []).push(p);
+    const key = `${p.salarie_id}-${day}`;
+    (bySalarieDay[key] ??= []).push(p);
   }
 
   let totalMs = 0;
-  for (const list of Object.values(byOuvrierDay)) {
+  for (const list of Object.values(bySalarieDay)) {
     list.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     let started: number | null = null;
     let working = false;

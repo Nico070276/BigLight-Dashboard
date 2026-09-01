@@ -10,7 +10,7 @@ export const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export type Ouvrier = {
+export type Salarie = {
   id: string;
   nom: string;
   prenom: string;
@@ -38,7 +38,7 @@ export type Chantier = {
 
 export type Pointage = {
   id: string;
-  ouvrier_id: string;
+  salarie_id: string;
   chantier_id: string | null;
   type: 'debut' | 'pause' | 'reprise' | 'fin';
   timestamp: string;
@@ -50,13 +50,13 @@ export type Pointage = {
 };
 
 export type PointageWithRelations = Pointage & {
-  ouvriers: Pick<Ouvrier, 'nom' | 'prenom'> | null;
+  salaries: Pick<Salarie, 'nom' | 'prenom'> | null;
   chantiers: Pick<Chantier, 'nom'> | null;
 };
 
 export type Absence = {
   id: string;
-  ouvrier_id: string;
+  salarie_id: string;
   date_debut: string;   // 'YYYY-MM-DD'
   date_fin: string;     // 'YYYY-MM-DD'
   type: 'conge' | 'maladie';
@@ -66,5 +66,5 @@ export type Absence = {
 };
 
 export type AbsenceWithRelations = Absence & {
-  ouvriers: Pick<Ouvrier, 'nom' | 'prenom'> | null;
+  salaries: Pick<Salarie, 'nom' | 'prenom'> | null;
 };

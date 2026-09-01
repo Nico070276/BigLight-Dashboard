@@ -4,7 +4,7 @@ import { SwRegister } from "@/components/sw-register";
 
 export const metadata: Metadata = {
   title: "BIG LIGHT — Pointage",
-  description: "Dashboard de gestion du pointage des ouvriers",
+  description: "Dashboard de gestion du pointage des salariés",
   applicationName: "BIG LIGHT",
   appleWebApp: {
     capable: true,

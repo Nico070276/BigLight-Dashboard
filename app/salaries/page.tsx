@@ -1,36 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase, type Ouvrier } from "@/lib/supabase";
+import { supabase, type Salarie } from "@/lib/supabase";
 import AppShell from "@/components/AppShell";
 import TopBar from "@/components/TopBar";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
-export default function OuvriersPage() {
-  const [ouvriers, setOuvriers] = useState<Ouvrier[]>([]);
+export default function SalariesPage() {
+  const [salaries, setSalaries] = useState<Salarie[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editing, setEditing] = useState<Ouvrier | null>(null);
+  const [editing, setEditing] = useState<Salarie | null>(null);
 
-  async function loadOuvriers() {
+  async function loadSalaries() {
     setLoading(true);
-    const { data } = await supabase.from("ouvriers").select("*").order("nom");
-    setOuvriers(data ?? []);
+    const { data } = await supabase.from("salaries").select("*").order("nom");
+    setSalaries(data ?? []);
     setLoading(false);
   }
 
   useEffect(() => {
-    loadOuvriers();
+    loadSalaries();
   }, []);
 
   async function handleDelete(id: string) {
-    if (!confirm("Supprimer cet ouvrier ? Ses pointages seront aussi supprimés.")) return;
-    await supabase.from("ouvriers").delete().eq("id", id);
-    await loadOuvriers();
+    if (!confirm("Supprimer ce salarié ? Ses pointages seront aussi supprimés.")) return;
+    await supabase.from("salaries").delete().eq("id", id);
+    await loadSalaries();
   }
 
-  function handleEdit(o: Ouvrier) {
-    setEditing(o);
+  function handleEdit(s: Salarie) {
+    setEditing(s);
     setShowModal(true);
   }
 
@@ -41,21 +41,21 @@ export default function OuvriersPage() {
 
   return (
     <AppShell>
-      <TopBar title="Ouvriers">
+      <TopBar title="Salariés">
         <button
           onClick={handleAdd}
           className="flex items-center gap-2 px-4 py-2 bg-accent text-background rounded-lg text-sm font-semibold hover:opacity-90"
         >
           <Plus size={16} />
-          Ajouter un ouvrier
+          Ajouter un salarié
         </button>
       </TopBar>
 
       {loading ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center text-muted">Chargement...</div>
-      ) : ouvriers.length === 0 ? (
+      ) : salaries.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center text-muted">
-          Aucun ouvrier enregistré. Cliquez sur &quot;Ajouter un ouvrier&quot; pour commencer.
+          Aucun salarié enregistré. Cliquez sur &quot;Ajouter un salarié&quot; pour commencer.
         </div>
       ) : (
         <>
@@ -71,28 +71,28 @@ export default function OuvriersPage() {
                 </tr>
               </thead>
               <tbody>
-                {ouvriers.map((o) => (
-                  <tr key={o.id} className="border-t border-border">
+                {salaries.map((s) => (
+                  <tr key={s.id} className="border-t border-border">
                     <td className="p-3">
-                      <div className="font-semibold">{o.prenom} {o.nom}</div>
-                      {o.email && <div className="text-xs text-muted">{o.email}</div>}
+                      <div className="font-semibold">{s.prenom} {s.nom}</div>
+                      {s.email && <div className="text-xs text-muted">{s.email}</div>}
                     </td>
                     <td className="p-3">
                       <code className="bg-black/5 px-2 py-0.5 rounded text-xs">••••</code>
                     </td>
-                    <td className="p-3">{o.telephone ?? "—"}</td>
+                    <td className="p-3">{s.telephone ?? "—"}</td>
                     <td className="p-3">
-                      {o.actif ? (
+                      {s.actif ? (
                         <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success/15 text-success">● Actif</span>
                       ) : (
                         <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-muted">Inactif</span>
                       )}
                     </td>
                     <td className="p-3 text-right">
-                      <button onClick={() => handleEdit(o)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-white/5 mr-1" title="Modifier">
+                      <button onClick={() => handleEdit(s)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-white/5 mr-1" title="Modifier">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => handleDelete(o.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger" title="Supprimer">
+                      <button onClick={() => handleDelete(s.id)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-danger/10 text-danger" title="Supprimer">
                         <Trash2 size={14} />
                       </button>
                     </td>
@@ -102,15 +102,15 @@ export default function OuvriersPage() {
             </table>
           </div>
           <div className="md:hidden space-y-3">
-            {ouvriers.map((o) => (
-              <div key={o.id} className="bg-card border border-border rounded-xl p-4">
+            {salaries.map((s) => (
+              <div key={s.id} className="bg-card border border-border rounded-xl p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <div className="font-semibold truncate">{o.prenom} {o.nom}</div>
-                    {o.email && <div className="text-xs text-muted mt-0.5 truncate">{o.email}</div>}
-                    {o.telephone && <div className="text-xs text-muted mt-0.5">{o.telephone}</div>}
+                    <div className="font-semibold truncate">{s.prenom} {s.nom}</div>
+                    {s.email && <div className="text-xs text-muted mt-0.5 truncate">{s.email}</div>}
+                    {s.telephone && <div className="text-xs text-muted mt-0.5">{s.telephone}</div>}
                   </div>
-                  {o.actif ? (
+                  {s.actif ? (
                     <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-success/15 text-success">● Actif</span>
                   ) : (
                     <span className="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-muted">Inactif</span>
@@ -119,10 +119,10 @@ export default function OuvriersPage() {
                 <div className="flex items-center justify-between mt-3">
                   <code className="bg-black/5 px-2 py-0.5 rounded text-xs">PIN ••••</code>
                   <div className="flex gap-2">
-                    <button onClick={() => handleEdit(o)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card" title="Modifier">
+                    <button onClick={() => handleEdit(s)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card" title="Modifier">
                       <Pencil size={15} />
                     </button>
-                    <button onClick={() => handleDelete(o.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card text-danger" title="Supprimer">
+                    <button onClick={() => handleDelete(s.id)} className="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-border bg-card text-danger" title="Supprimer">
                       <Trash2 size={15} />
                     </button>
                   </div>
@@ -134,12 +134,12 @@ export default function OuvriersPage() {
       )}
 
       {showModal && (
-        <OuvrierModal
-          ouvrier={editing}
+        <SalarieModal
+          salarie={editing}
           onClose={() => setShowModal(false)}
           onSaved={() => {
             setShowModal(false);
-            loadOuvriers();
+            loadSalaries();
           }}
         />
       )}
@@ -147,28 +147,28 @@ export default function OuvriersPage() {
   );
 }
 
-function OuvrierModal({
-  ouvrier,
+function SalarieModal({
+  salarie,
   onClose,
   onSaved,
 }: {
-  ouvrier: Ouvrier | null;
+  salarie: Salarie | null;
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [nom, setNom] = useState(ouvrier?.nom ?? "");
-  const [prenom, setPrenom] = useState(ouvrier?.prenom ?? "");
-  const [email, setEmail] = useState(ouvrier?.email ?? "");
-  const [telephone, setTelephone] = useState(ouvrier?.telephone ?? "");
+  const [nom, setNom] = useState(salarie?.nom ?? "");
+  const [prenom, setPrenom] = useState(salarie?.prenom ?? "");
+  const [email, setEmail] = useState(salarie?.email ?? "");
+  const [telephone, setTelephone] = useState(salarie?.telephone ?? "");
   const [pin, setPin] = useState("");
-  const [actif, setActif] = useState(ouvrier?.actif ?? true);
+  const [actif, setActif] = useState(salarie?.actif ?? true);
   const [saving, setSaving] = useState(false);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
 
-    const payload: Partial<Ouvrier> = {
+    const payload: Partial<Salarie> = {
       nom,
       prenom,
       email: email || null,
@@ -189,16 +189,16 @@ function OuvrierModal({
         return;
       }
       payload.pin_hash = hashed as string;
-    } else if (!ouvrier) {
-      alert("Le code PIN est obligatoire pour un nouvel ouvrier.");
+    } else if (!salarie) {
+      alert("Le code PIN est obligatoire pour un nouveau salarié.");
       setSaving(false);
       return;
     }
 
-    if (ouvrier) {
-      await supabase.from("ouvriers").update(payload).eq("id", ouvrier.id);
+    if (salarie) {
+      await supabase.from("salaries").update(payload).eq("id", salarie.id);
     } else {
-      await supabase.from("ouvriers").insert(payload);
+      await supabase.from("salaries").insert(payload);
     }
 
     setSaving(false);
@@ -208,7 +208,7 @@ function OuvrierModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
       <form onSubmit={handleSave} className="bg-card rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-bold mb-4">{ouvrier ? "Modifier l'ouvrier" : "Nouvel ouvrier"}</h2>
+        <h2 className="text-lg font-bold mb-4">{salarie ? "Modifier le salarié" : "Nouveau salarié"}</h2>
 
         <div className="space-y-3">
           <Field label="Prénom" value={prenom} onChange={setPrenom} required />
@@ -216,7 +216,7 @@ function OuvrierModal({
           <Field label="Email" value={email} onChange={setEmail} type="email" />
           <Field label="Téléphone" value={telephone} onChange={setTelephone} placeholder="+352 ..." />
           <Field
-            label={ouvrier ? "Nouveau code PIN (laisser vide pour garder l'actuel)" : "Code PIN (4 chiffres)"}
+            label={salarie ? "Nouveau code PIN (laisser vide pour garder l'actuel)" : "Code PIN (4 chiffres)"}
             value={pin}
             onChange={setPin}
             type="password"
@@ -225,7 +225,7 @@ function OuvrierModal({
           />
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={actif} onChange={(e) => setActif(e.target.checked)} />
-            Ouvrier actif
+            Salarié actif
           </label>
         </div>
 

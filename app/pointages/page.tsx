@@ -32,8 +32,8 @@ const TYPES: PType[] = ["debut", "pause", "reprise", "fin"];
 
 type Journee = {
   date: string;
-  ouvrierId: string;
-  ouvrierNom: string;
+  salarieId: string;
+  salarieNom: string;
   chantier: string;
   debut: string | null;
   fin: string | null;
@@ -75,7 +75,7 @@ export default function PointagesPage() {
     setLoading(true);
     let query = supabase
       .from("pointages")
-      .select("*, ouvriers(nom, prenom), chantiers(nom)")
+      .select("*, salaries(nom, prenom), chantiers(nom)")
       .order("timestamp", { ascending: false })
       .limit(500);
 
@@ -135,7 +135,7 @@ export default function PointagesPage() {
               <thead>
                 <tr className="bg-black/[0.02] text-xs uppercase tracking-wider text-muted">
                   <th className="text-left p-3 font-semibold">Date</th>
-                  <th className="text-left p-3 font-semibold">Ouvrier</th>
+                  <th className="text-left p-3 font-semibold">Salarié</th>
                   <th className="text-left p-3 font-semibold">Chantier</th>
                   <th className="text-left p-3 font-semibold">Début</th>
                   <th className="text-left p-3 font-semibold">Pause</th>
@@ -150,7 +150,7 @@ export default function PointagesPage() {
                   <tr key={i} className="border-t border-border">
                     <td className="p-3">{new Date(j.date).toLocaleDateString("fr-FR")}</td>
                     <td className="p-3 font-semibold">
-                      {j.ouvrierNom}
+                      {j.salarieNom}
                       {j.manuel && (
                         <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-info/15 text-info" title="Journée contenant une correction manuelle">
                           corrigé
@@ -204,7 +204,7 @@ export default function PointagesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold truncate">
-                      {j.ouvrierNom}
+                      {j.salarieNom}
                       {j.manuel && (
                         <span className="ml-2 inline-flex px-1.5 py-0.5 rounded text-[10px] uppercase font-semibold bg-info/15 text-info">
                           corrigé
@@ -339,7 +339,7 @@ function JourneeEditModal({
     supabase
       .from("pointages_audit")
       .select("id, action, source, changed_at, old_data, new_data")
-      .eq("ouvrier_id", journee.ouvrierId)
+      .eq("salarie_id", journee.salarieId)
       .gte("pointage_ts", start.toISOString())
       .lt("pointage_ts", end.toISOString())
       .order("changed_at", { ascending: false })
@@ -390,7 +390,7 @@ function JourneeEditModal({
       }));
 
       const { error } = await supabase.rpc("admin_save_journee", {
-        p_ouvrier_id: journee.ouvrierId,
+        p_salarie_id: journee.salarieId,
         p_deleted_ids: deletedIds,
         p_events: events,
       });
@@ -412,7 +412,7 @@ function JourneeEditModal({
           <div>
             <h2 className="text-lg font-bold">Corriger la journée</h2>
             <p className="text-xs text-muted mt-0.5">
-              {journee.ouvrierNom} · {new Date(journee.date).toLocaleDateString("fr-FR")}
+              {journee.salarieNom} · {new Date(journee.date).toLocaleDateString("fr-FR")}
             </p>
           </div>
           <button onClick={onClose} className="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-white/5">
@@ -538,7 +538,7 @@ function groupByJournee(pointages: PointageWithRelations[]): Journee[] {
   const map: Record<string, PointageWithRelations[]> = {};
   for (const p of pointages) {
     const day = p.timestamp.slice(0, 10);
-    const key = `${p.ouvrier_id}-${day}`;
+    const key = `${p.salarie_id}-${day}`;
     (map[key] ??= []).push(p);
   }
 
@@ -546,7 +546,7 @@ function groupByJournee(pointages: PointageWithRelations[]): Journee[] {
   for (const [, list] of Object.entries(map)) {
     list.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     const first = list[0];
-    const ouvrierNom = first.ouvriers ? `${first.ouvriers.prenom} ${first.ouvriers.nom}` : "—";
+    const salarieNom = first.salaries ? `${first.salaries.prenom} ${first.salaries.nom}` : "—";
     const chantier = first.chantiers?.nom ?? "—";
     const debut = list.find((p) => p.type === "debut");
     const fin = list.slice().reverse().find((p) => p.type === "fin");
@@ -582,8 +582,8 @@ function groupByJournee(pointages: PointageWithRelations[]): Journee[] {
 
     result.push({
       date: first.timestamp.slice(0, 10),
-      ouvrierId: first.ouvrier_id,
-      ouvrierNom,
+      salarieId: first.salarie_id,
+      salarieNom,
       chantier,
       debut: debut ? formatTime(debut.timestamp) : null,
       fin: fin ? formatTime(fin.timestamp) : null,
@@ -595,5 +595,5 @@ function groupByJournee(pointages: PointageWithRelations[]): Journee[] {
     });
   }
 
-  return result.sort((a, b) => b.date.localeCompare(a.date) || a.ouvrierNom.localeCompare(b.ouvrierNom));
+  return result.sort((a, b) => b.date.localeCompare(a.date) || a.salarieNom.localeCompare(b.salarieNom));
 }

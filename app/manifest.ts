@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "BIG LIGHT — Pointage",
     short_name: "BIG LIGHT",
-    description: "Dashboard de gestion du pointage des ouvriers",
+    description: "Dashboard de gestion du pointage des salariés",
     start_url: "/",
     display: "standalone",
     background_color: "#111110",
